@@ -32,6 +32,24 @@ typedef struct {
     section** sections;
 } INIfile;
 
+section* find_section(INIfile* file, char* sect_name) {
+	for (size_t i = 0; i < file->length; i++) {
+		if (strcmp(file->sections[i]->name, sect_name) == 0) {
+			return file->sections[i];
+		}
+	}
+	return NULL;
+}
+
+key* find_key(section* section, char* key_name) {
+	for (size_t i = 0; i < section->length; i++) {
+		if (strcmp(section->keys[i]->name, key_name) == 0) {
+			return section->keys[i];
+		}
+	}
+	return NULL;
+}
+
 
 int main(int argc, char* argv[])
 {
