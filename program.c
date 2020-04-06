@@ -50,6 +50,73 @@ key* find_key(section* section, char* key_name) {
 	return NULL;
 }
 
+char* get_section_name (const char* str) {
+	size_t i = 0;
+	size_t str_size = strlen(str);
+	char* output = (char*) malloc(sizeof(char) * str_size);
+	while(str[i + 1] != ']' && i < str_size) {
+		if(isalnum(str[i + 1])) {
+			output[i] = str[i + 1];
+		} else {
+			return NULL;
+		}
+		i++;
+	}
+	if(strlen(output) == 0) {
+		return NULL;
+	}
+	output[i] = '\0';
+	return output;
+}
+
+char* get_key_name (const char* str) {
+	size_t i = 0;
+	size_t str_size = strlen(str);
+	char* output = (char*) malloc(sizeof(char) * str_size);
+	while(str[i] != ' ' && str[i] != '=' && i < str_size) {
+		if(isalnum(str[i])) {
+			output[i] = str[i];
+		} else {
+			return NULL;
+		}
+		i++;
+	}
+	while(str[i] == ' ' && i < str_size) {
+		if(str[i + 1] != ' ' && str[i + 1] != '=') {
+			return NULL;
+		}
+		i++;
+	}
+	if(strlen(output) == 0) {
+		return NULL;
+	}
+	output[i] = '\0';
+	return output;
+}
+
+
+char* get_key_value (const char* str) {
+	size_t i = 0;
+	size_t j = 0;
+	size_t str_size = strlen(str);
+	char* output = (char*) malloc(sizeof(char) * str_size);
+	while(str[i] != '=' && i < str_size) {
+		i++;
+	}
+	i++;
+	while(str[i] == ' ' && i < str_size) {
+		i++;
+	}
+	while(str[i] != '\n' && str[i] != '\0' && i < str_size) {
+		output[j++] = str[i++];
+	}
+	if(strlen(output) == 0) {
+		return NULL;
+	}
+	output[j] = '\0';
+	return output;
+}
+
 
 int main(int argc, char* argv[])
 {
@@ -104,14 +171,18 @@ int main(int argc, char* argv[])
 	}
 
     char* line = NULL;
-	section* cur_section = NULL;
+	char* temp_name = NULL;
+	char* temp_value = NULL;
+	section* curr_section = NULL;
+	key* curr_key = NULL;
 	size_t i = 0;
+	size_t j = 0;
 	size_t line_length = 0;
 	ssize_t read;
 
 	INIfile* file = (INIfile*) malloc(sizeof(INIfile));
 	file->length = 0;
-    file->size = 5;
+    file->size = 8;
 	file->sections = (section**) malloc(sizeof(section*) * file->size);
 
     while ((read = getline(&line, &line_length, fp) != -1)) {
@@ -121,15 +192,68 @@ int main(int argc, char* argv[])
 		}
 		if(line[0] == '[') {
 			if(file->length == file->size) {
-           	 	file->size += 5;
+           	 	file->size += 8;
             	file->sections = realloc(file->sections, file->size * sizeof(section*));
 			}
-			i = file->length;
-			file->sections[i] = (section*) malloc (sizeof(section));
 
+			if((temp_name= get_section_name(line)) == NULL) {
+				action = 0;
+				printf("Error: Invalid section identifier.\n");
+				break;
+			}
+
+			file->sections[i] = (section*) malloc (sizeof(section));
+			curr_section = file->sections[i];
+			curr_section->name = temp_name;
+			curr_section->length = 0;
+			curr_section->size = 16;
+			curr_section->keys = (key**) malloc (sizeof(key*) * curr_section->size);
+			i = ++(file->length);
+			j = 0;
         }
-		printf("%s", line);
+
+		if(isalnum(line[0])) {
+			if(curr_section == NULL){
+				action = 0;
+				printf("Error: a key must belong to a section!\n");
+				break;
+			}
+
+			if(curr_section->length == curr_section->size) {
+				curr_section->size += 16;
+				curr_section->keys = realloc(curr_section->keys, sizeof(key*) * curr_section->size);
+			}
+
+			if((temp_name = get_key_name(line)) == NULL) {
+				action = 0;
+				printf("Error: Invalid key identifier.\n");
+				break;
+			}
+
+			if((temp_value = get_key_value(line)) == NULL) {
+				action = 0;
+				printf("Error: Invalid value.\n");
+				break;
+			}
+
+			curr_section->keys[j] = (key*) malloc(sizeof(key));
+			curr_key = curr_section->keys[j];
+			curr_key->name = temp_name;
+			if(atof(temp_value) != 0 || strcmp(temp_value, "0") == 0) {
+				curr_key->type = 'f';
+				curr_key->val.f = atof(temp_value);
+			} else {
+				curr_key->type = 's';
+				curr_key->val.str = temp_value;
+			}
+			j = ++(curr_section->length);
+		}
     }
+
+	for(int i = 0; i < file->length; i++) {
+		printf("%s = %d\n", file->sections[i]->name, file->sections[i]->length);
+	}
+
 		//wyświetlanie poleceń
 	if(action == 1)
 	{
