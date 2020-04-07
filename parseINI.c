@@ -192,19 +192,6 @@ int main(int argc, char* argv[])
 			char* s2_name = strtok(part2,".");
 			char* k2_name = strtok(NULL, ".");
 
-			//char *beginB = "[";
-			//char *endB = "]";
-			//char par1[strlen(sec1)+1];
-			//char par2[strlen(sec2)+1];
-			//strcpy(par1,beginB);
-			//strcpy(par2,beginB);
-			//strcat(par1,sec1);
-			//strcat(par2,sec2);
-			//strcat(par1,endB);
-			//strcat(par2,endB);
-			//printf("%s %s \n", par1,par2);
-			//printf("%s.%s %s %s.%s\n", sec1, key1, znak, sec2, key2);
-
 			section1_name = (char*) malloc(sizeof(char) * (strlen(s1_name) + 1));
 			strcpy(section1_name, s1_name);
 			section1_name[strlen(s1_name)] = '\0';
@@ -232,14 +219,6 @@ int main(int argc, char* argv[])
 
 			char* s1_name = strtok(target, ".");
 			char* k1_name = strtok(NULL, ".");
-
-			//char *beginB = "[";
-			//char *endB = "]";
-			//char par1[strlen(section)+1];
-			//strcpy(par1,beginB);
-			//strcat(par1,section);
-			//strcat(par1,endB);
-			//printf("%s\n", section1_name );
 
 			section1_name = (char*) malloc(sizeof(char) * (strlen(s1_name) + 1));
 			strcpy(section1_name, s1_name);
