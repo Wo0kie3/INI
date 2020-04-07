@@ -4,25 +4,36 @@
 	Konrad Szewczyk, 145466
 	Jerzy Lukaszewicz, 145458
 
+
 	How to use:
 	1) parseINI path_to_file section1.key1
 		- prints out the value of the "key1" key in the "section1" section
 		of the file "path_to_file"
+		
 	2) parseINI path_to_file expression "section1.key1 + section2.key2"
 		- calculated and prints out the value of a given expression
 		- possible operations:
 			- addition (number + number)
-			- concatenation (string + string)
+			- concatenation without additional whitespace character (string + string)
 			- subtraction (number + number)
 			- multiplication (number + number)
 			- division (number + number)
+		- the result of operation on two integers is an integer number
+		- the result of operation on an integer and a float is a float
+		- the result of operation on two floats is a float
+		- !!! there must be a single space between the operator and the variables !!!
+
 
 	INI file assuptions:
 	1) 0 - integer (number)
 	2) 0.0 - float (number)
 	3) 0.00, 0.000... - string
-	4) section and key names cannot be empty
-	5) key value can take zero length values (treated as a string)
+	4) 1, 2, 523 - integer (number)
+	5) 1.1, 0.01. - float (number)
+	6) test, 1.2.2, 127.0.0.1 - string
+	7) section and key names cannot be empty
+	8) section and key names may consist only of alphanumerical characters
+	9) key value can take zero length values (treated as a string)
 	
 */
 
@@ -181,19 +192,6 @@ int main(int argc, char* argv[])
 			char* s2_name = strtok(part2,".");
 			char* k2_name = strtok(NULL, ".");
 
-			//char *beginB = "[";
-			//char *endB = "]";
-			//char par1[strlen(sec1)+1];
-			//char par2[strlen(sec2)+1];
-			//strcpy(par1,beginB);
-			//strcpy(par2,beginB);
-			//strcat(par1,sec1);
-			//strcat(par2,sec2);
-			//strcat(par1,endB);
-			//strcat(par2,endB);
-			//printf("%s %s \n", par1,par2);
-			//printf("%s.%s %s %s.%s\n", sec1, key1, znak, sec2, key2);
-
 			section1_name = (char*) malloc(sizeof(char) * (strlen(s1_name) + 1));
 			strcpy(section1_name, s1_name);
 			section1_name[strlen(s1_name)] = '\0';
@@ -221,14 +219,6 @@ int main(int argc, char* argv[])
 
 			char* s1_name = strtok(target, ".");
 			char* k1_name = strtok(NULL, ".");
-
-			//char *beginB = "[";
-			//char *endB = "]";
-			//char par1[strlen(section)+1];
-			//strcpy(par1,beginB);
-			//strcat(par1,section);
-			//strcat(par1,endB);
-			//printf("%s\n", section1_name );
 
 			section1_name = (char*) malloc(sizeof(char) * (strlen(s1_name) + 1));
 			strcpy(section1_name, s1_name);
