@@ -169,7 +169,7 @@ int main(int argc, char* argv[])
 
 		if(strcmp(argv[2],"expression") == 0)
 		{
-			char target[strlen(argv[2]+1)];
+			char target[strlen(argv[3]+1)];
 			strcpy(target, argv[3]);
 
 			char *part1 = strtok(target, " ");
