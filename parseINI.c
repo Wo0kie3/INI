@@ -2,7 +2,7 @@
 
 	Projekt no. 1 "INI file parser" by:
 	Konrad Szewczyk, 145466
-	Jerzy Lukaszewicz, ######
+	Jerzy Lukaszewicz, 145458
 
 	How to use:
 	1) parseINI path_to_file section1.key1
