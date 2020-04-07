@@ -34,6 +34,7 @@
 	7) section and key names cannot be empty
 	8) section and key names may consist only of alphanumerical characters
 	9) key value can take zero length values (treated as a string)
+	10) size of integer and float numbers are limited by system constains
 	
 */
 
