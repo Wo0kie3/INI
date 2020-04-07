@@ -29,7 +29,7 @@
 	2) 0.0 - float (number)
 	3) 0.00, 0.000... - string
 	4) 1, 2, 523 - integer (number)
-	5) 1.1, 0.01. - float (number)
+	5) 1.1, 0.01 - float (number)
 	6) test, 1.2.2, 127.0.0.1 - string
 	7) section and key names cannot be empty
 	8) section and key names may consist only of alphanumerical characters
