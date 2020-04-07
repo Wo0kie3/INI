@@ -76,15 +76,20 @@ char* get_section_name (const char* str) {
 	size_t i = 0;
 	size_t str_size = strlen(str);
 	char* output = (char*) malloc(sizeof(char) * str_size);
+	for(unsigned int i = 0; i < str_size; i++){
+		output[i] = '\0';
+	}
 	while(str[i + 1] != ']' && i < str_size) {
 		if(isalnum(str[i + 1])) {
 			output[i] = str[i + 1];
 		} else {
+			free(output);
 			return NULL;
 		}
 		i++;
 	}
 	if(strlen(output) == 0) {
+		free(output);
 		return NULL;
 	}
 	output[i] = '\0';
@@ -95,21 +100,27 @@ char* get_key_name (const char* str) {
 	size_t i = 0;
 	size_t str_size = strlen(str);
 	char* output = (char*) malloc(sizeof(char) * str_size);
+	for(unsigned int i = 0; i < str_size; i++){
+		output[i] = '\0';
+	}
 	while(str[i] != ' ' && str[i] != '=' && i < str_size) {
 		if(isalnum(str[i])) {
 			output[i] = str[i];
 		} else {
+			free(output);
 			return NULL;
 		}
 		i++;
 	}
 	while(str[i] == ' ' && i < str_size) {
 		if(str[i + 1] != ' ' && str[i + 1] != '=') {
+			free(output);
 			return NULL;
 		}
 		i++;
 	}
 	if(strlen(output) == 0) {
+		free(output);
 		return NULL;
 	}
 	output[i] = '\0';
@@ -265,6 +276,7 @@ int main(int argc, char* argv[])
 
 				file->sections[i] = (section*) malloc (sizeof(section));
 				curr_section = file->sections[i];
+				curr_section->name = NULL;
 				curr_section->name = temp_name;
 				curr_section->length = 0;
 				curr_section->size = 16;
@@ -299,6 +311,7 @@ int main(int argc, char* argv[])
 
 				curr_section->keys[j] = (key*) malloc(sizeof(key));
 				curr_key = curr_section->keys[j];
+				curr_key->name = NULL;
 				curr_key->name = temp_name;
 				if(atof(temp_value) != 0 || strcmp(temp_value, "0") == 0 || strcmp(temp_value, "0.0") == 0) {
 					if(atof(temp_value) == atoi(temp_value) && strcmp(temp_value, "0.0") != 0) {
@@ -314,8 +327,9 @@ int main(int argc, char* argv[])
 				}
 				j = ++(curr_section->length);
 			}
+			
 		}
-
+		free(line);
 		section* section1 = NULL;
 		section* section2 = NULL;
 
@@ -413,10 +427,15 @@ int main(int argc, char* argv[])
 
 		for(unsigned int i = 0; i < file->length; i++) {
 			for(unsigned int j = 0; j < file->sections[i]->length; j++) {
+				free(file->sections[i]->keys[j]->value);
+				free(file->sections[i]->keys[j]->name);
 				free(file->sections[i]->keys[j]);
 			}
+			free(file->sections[i]->name);
+			free(file->sections[i]->keys);
 			free(file->sections[i]);
 		}
+		free(file->sections);
 		free(file);
 
 		if (ferror(fp))
