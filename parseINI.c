@@ -25,16 +25,14 @@
 
 
 	INI file assuptions:
-	1) 0 - integer (number)
-	2) 0.0 - float (number)
-	3) 0.00, 0.000... - string
-	4) 1, 2, 523 - integer (number)
-	5) 1.1, 0.01 - float (number)
-	6) test, 1.2.2, 127.0.0.1 - string
-	7) section and key names cannot be empty
-	8) section and key names may consist only of alphanumerical characters
-	9) key value can take zero length values (treated as a string)
-	10) size of integer and float numbers are limited by system constains
+	1) 0 is always interpreted as integer (also 0.0, 0.00, ...)
+	2) 1, 2, 523 - integer (number)
+	3) 1.1, 0.01 - float (number)
+	4) test, 1.2.2, 127.0.0.1 - string
+	5) section and key names cannot be empty
+	6) section and key names may consist only of alphanumerical characters
+	7) key value can take zero length values (treated as a string)
+	8) size of integer and float numbers are limited by system constains
 	
 */
 
@@ -65,6 +63,15 @@ typedef struct {
     size_t size;
     section** sections;
 } INIfile;
+
+int isNumber(const char * str) {
+	if (str == NULL || *str == '\0' || isspace(*str)) {
+		return 0;
+	}
+	char * p;
+	strtod(str, &p);
+	return *p == '\0';
+}
 
 section* find_section(INIfile* file, char* sect_name) {
 	for (size_t i = 0; i < file->length; i++) {
@@ -162,6 +169,7 @@ char* get_key_value (const char* str) {
 
 int main(int argc, char* argv[])
 {
+	printf("\n");
 	if (argc < 3) {
 		printf("Error: Insufficient number of arguments.\n");
 	} else {
@@ -169,7 +177,7 @@ int main(int argc, char* argv[])
 		FILE* fp = fopen(argv[1], "r");
 
 		if(!fp) {
-			perror("File opening failed");
+			perror("File opening failed\n");
 			return EXIT_FAILURE;
 		}
 
@@ -304,8 +312,8 @@ int main(int argc, char* argv[])
 				curr_key = curr_section->keys[j];
 				curr_key->name = NULL;
 				curr_key->name = temp_name;
-				if(atof(temp_value) != 0 || strcmp(temp_value, "0") == 0 || strcmp(temp_value, "0.0") == 0) {
-					if(atof(temp_value) == atoi(temp_value) && strcmp(temp_value, "0.0") != 0) {
+				if(isNumber(temp_value)) {
+					if(atof(temp_value) == atoi(temp_value)) {
 						curr_key->type = 'i';
 						curr_key->value = temp_value;
 					} else {
@@ -335,7 +343,7 @@ int main(int argc, char* argv[])
 							if(operation == '+') {
 								if (key1->type == 's'|| key2->type == 's') {
 									if (key1->type == 's' && key2->type =='s') {
-										printf("%s%s", key1->value, key2->value);
+										printf("%s%s\n", key1->value, key2->value);
 									} else {
 										printf("Error: Concatenation of number and string is invalid.\n");
 									}
@@ -347,7 +355,7 @@ int main(int argc, char* argv[])
 							}
 							else if(operation == '-') {
 								if (key1->type == 's' || key2->type == 's') {
-									printf("Error: Invalid operation on a string");
+									printf("Error: Invalid operation on a string\n");
 								} else if (key1->type == 'i' && key2->type == 'i') {
 									printf("%d\n", atoi(key1->value) - atoi(key2->value));
 								} else {
@@ -356,7 +364,7 @@ int main(int argc, char* argv[])
 							}
 							else if(operation == '*') {
 								if (key1->type == 's' || key2->type == 's') {
-									printf("Error: Invalid operation on a string");
+									printf("Error: Invalid operation on a string\n");
 								} else if (key1->type == 'i' && key2->type == 'i') {
 									printf("%d\n", atoi(key1->value) * atoi(key2->value));
 								} else {
@@ -365,7 +373,7 @@ int main(int argc, char* argv[])
 							}
 							else if(operation == '/') {
 								if (key1->type == 's' || key2->type == 's') {
-									printf("Error: Invalid operation on a string");
+									printf("Error: Invalid operation on a string\n");
 								} else if(atof(key2->value) != 0){
 									if (key1->type == 'i' && key2->type == 'i') {
 										printf("%d\n", atoi(key1->value) / atoi(key2->value));
